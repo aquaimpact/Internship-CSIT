@@ -9,7 +9,7 @@ function Graph(props){
         <div style={{display:props.display}}>
             
             <div style={{border:"1px solid #000000", borderRadius:"15px",display:"inline-block", backgroundColor:"#FFFFFF"}}>
-                <Chart options={props.options} series={props.series} type="rangeBar" height={450} />
+                <Chart options={props.options} series={props.series} type="rangeBar" height={450} width={450}/>
             </div>
 
         </div>
