@@ -1,0 +1,20 @@
+import React from 'react'
+import * as rb from 'react-bootstrap'
+import {useState} from 'react'
+import Chart from "react-apexcharts";
+
+function Graph(props){
+
+    return(
+        <div style={{display:props.display}}>
+            
+            <div style={{border:"1px solid #000000", borderRadius:"15px",display:"inline-block", backgroundColor:"#FFFFFF"}}>
+                <Chart options={props.options} series={props.series} type="rangeBar" height={450} />
+            </div>
+
+        </div>
+    )
+    
+}
+
+export default Graph
