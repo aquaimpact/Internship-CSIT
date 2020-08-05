@@ -154,15 +154,13 @@ class TopNavBar extends React.Component{
         this.state.suspectCases.forEach(suspect => {
             let data = []
 
-            this.state.movements.forEach(movement => {
-                if(movement.suspectId === suspect.id){
-                    data.push(
-                        {
-                            x: movement.locationShortaddress,
-                            y: [this.convertDate(movement.datetimeEntered),this.convertDate(movement.datetimeLeft)]
-                        }
-                    )
-                }
+            this.state.movements.filter(moves => moves.suspectId === suspect.id).forEach(movement => {
+                data.push(
+                    {
+                        x: movement.locationShortaddress,
+                        y: [this.convertDate(movement.datetimeEntered),this.convertDate(movement.datetimeLeft)]
+                    }
+                )
             })
 
             series2.push(
@@ -172,7 +170,7 @@ class TopNavBar extends React.Component{
                 }
             )
         })
-        this.setState({series2})
+        return series2
     }
 
     
@@ -181,18 +179,26 @@ class TopNavBar extends React.Component{
 
         let suspected = this.state.dataList.map(sus => <rb.NavDropdown.Item eventKey={sus}>{sus}</rb.NavDropdown.Item>)
         
-        let displaySetting, displaySetting2
+        let displaySetting, displaySetting2, seriesdata
+        let test
 
         if(this.state.suspectCases.length > 0 && this.state.movements.length > 0 ){
             displaySetting = "none"
             displaySetting2 = "block"
-            this.populateGraph1()
+            
+            test = this.populateGraph1()
         }
         else{
             displaySetting = "block"
             displaySetting2 = "none"
         }
         
+        let graph1
+
+        if(test != undefined){
+            graph1 = <Graph display={displaySetting2} options={this.state.options} series={test} tool/>
+        }
+
         return (
             <div>
                 <rb.Navbar bg="white">
@@ -273,8 +279,7 @@ class TopNavBar extends React.Component{
                 <div style={{display:displaySetting, height:"100%"}}>
                     <h1 style={{color:"#424761", textAlign:"center", marginTop:"15%"}}>Import some data to begin</h1>
                 </div>
-
-                {/* <Graph display={displaySetting2} options={this.state.options} series={this.state.series}/> */}
+                {graph1}
             </div>
         )
     }
