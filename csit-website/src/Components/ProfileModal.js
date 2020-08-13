@@ -7,8 +7,6 @@ function ProfileModal(props){
 
     if(props.shown === "true"){
 
-        
-
         handleShow()
     }
 
@@ -18,20 +16,7 @@ function ProfileModal(props){
     const handleShow = () => setShow(true);
     return(
         <div>
-            <rb.Modal show={show} onHide={handleClose}>
-                <rb.Modal.Header closeButton>
-                    <rb.Modal.Title>Modal heading</rb.Modal.Title>
-                </rb.Modal.Header>
-                <rb.Modal.Body>Woohoo, you're reading this text in a modal!</rb.Modal.Body>
-                <rb.Modal.Footer>
-                    <rb.Button variant="secondary" onClick={handleClose}>
-                        Close
-                    </rb.Button>
-                    <rb.Button variant="primary" onClick={handleClose}>
-                        Save Changes
-                    </rb.Button>
-                </rb.Modal.Footer>
-            </rb.Modal>
+            
         </div>
     )
 }

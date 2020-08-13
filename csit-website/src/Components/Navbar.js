@@ -6,6 +6,7 @@ import axios from 'axios'
 import Graph from './Graphs'
 import Table from './Table'
 import Table2 from './Table2'
+import ProfileModal from './ProfileModal'
 // import Chip from '@material-ui/core/Chip';
 
 
@@ -35,6 +36,8 @@ class TopNavBar extends React.Component{
             CCID:[],
             CloseContacts:{},
             fromCCID:[],
+            profileModal:{},
+            showSelection2: false,
         }
     }
 
@@ -198,8 +201,9 @@ class TopNavBar extends React.Component{
     }
 
     databackTable = (dataFromChild) => {
-        console.log("Modal Data:" + dataFromChild)
-        // this.setState({fromCCID:dataFromChild})
+
+        this.setState({profileModal:dataFromChild})
+        this.setState({showSelection2:true})
     }
 
     isEmptyObject(obj) {
@@ -539,11 +543,12 @@ class TopNavBar extends React.Component{
                             </rb.Tab>
                         </rb.Tabs>         
                     </div>
-
+                    
+                    {/* PTAP TO CC AND CC TO PTAP */}
                     <div>
                         <rb.Modal show={this.state.showSelection} onHide={()=>this.setState({showSelection:false})} centered size="xl" scrollable={true}>
                             <rb.Modal.Header closeButton>
-                                <rb.Modal.Title>Modal heading</rb.Modal.Title>
+                                <rb.Modal.Title>Transfer Users</rb.Modal.Title>
                             </rb.Modal.Header>
                             <rb.Modal.Body>
                                 <div style={{float:"left", textAlign:"center", width:"40%"}}>
@@ -568,13 +573,35 @@ class TopNavBar extends React.Component{
                                 <rb.Button variant="secondary" onClick={()=>this.setState({showSelection:false})}>
                                     Close
                                 </rb.Button>
-                                <rb.Button variant="primary" onClick={()=>this.setState({showSelection:false})}>
-                                    Save Changes
-                                </rb.Button>
                             </rb.Modal.Footer>
                         </rb.Modal>
                     </div>
                     
+                    <div>
+                        <rb.Modal show={this.state.showSelection2} onHide={()=>this.setState({showSelection2:false})}>
+                            <rb.Modal.Header closeButton>
+                                <rb.Modal.Title>Person Profile</rb.Modal.Title>
+                            </rb.Modal.Header>
+                            <rb.Modal.Body>
+                                <text><b>Name:</b> {this.state.profileModal.firstName + " " + this.state.profileModal.lastName}</text>
+                                <br/>
+                                <text><b>Gender:</b> {this.state.profileModal.gender}</text>
+                                <br/>
+                                <text><b>Case Number:</b> {this.state.profileModal.caseNumber}</text>
+                                <br/>
+                                <text><b>Marital Status:</b> {this.state.profileModal.maritalStatus}</text>
+                                <br/>
+                                <text><b>Phone Number:</b> {this.state.profileModal.phoneNumber}</text>
+                                <br/>
+                                <text><b>Company:</b> {this.state.profileModal.company}</text>
+                            </rb.Modal.Body>
+                            <rb.Modal.Footer>
+                                <rb.Button variant="secondary" onClick={()=>this.setState({showSelection2:false})}>
+                                    Close
+                                </rb.Button>
+                            </rb.Modal.Footer>
+                        </rb.Modal>
+                    </div>
                 </div>
             </div>
         )

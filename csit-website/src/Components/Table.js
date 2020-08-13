@@ -17,9 +17,7 @@ let selectedrows = []
 const options = {
     onRowClick: function(row) {
 
-        let profile
-
-        fetch(`http://localhost:8080/getProfile?IDs=${row.UID}`).then(r => r.json()).then(data => that.databack(data)).catch(err => {console.log(err);});
+        fetch(`http://localhost:8080/getProfile?IDs=${row.UID}`).then((r) => r.json()).then((data) => {that.databack(data)}).catch(err => {console.log(err)})
     }
 };
 
@@ -54,6 +52,8 @@ function onSelectAll(isSelected, rows) {
 }
 
 function Table(props){
+    that = props
+
     if(props.type === "CC"){
         return(
             <div style={{display:props.display}}>
@@ -69,7 +69,6 @@ function Table(props){
     }
     else{
         if(props.type === "modal-edit"){
-            that = props
             return(
                 <div style={{display:props.display}}>
                     <BootstrapTable data={ props.tableprops } selectRow={ selectRowProp }>
