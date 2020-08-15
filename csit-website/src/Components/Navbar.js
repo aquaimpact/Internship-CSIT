@@ -75,7 +75,7 @@ class TopNavBar extends React.Component{
                     // this.postSuspects(JSON.stringify(lols.data))
     
                     // Adds names into dropdown
-                    this.setState({dataList: ["None", ...lols.data.map(names => names.firstName + " " + names.lastName)]})
+                    this.setState({dataList: ["All Suspected Cases", ...lols.data.map(names => names.firstName + " " + names.lastName)]})
     
                     const data = lols.data
                     this.setState({suspectCases: data})
@@ -578,23 +578,8 @@ class TopNavBar extends React.Component{
                     </div>
                     
                     <div>
-                        <rb.Modal show={this.state.showSelection2} onHide={()=>this.setState({showSelection2:false})}>
-                            <rb.Modal.Header closeButton>
-                                <rb.Modal.Title>Person Profile</rb.Modal.Title>
-                            </rb.Modal.Header>
-                            <rb.Modal.Body>
-                                <text><b>Name:</b> {this.state.profileModal.firstName + " " + this.state.profileModal.lastName}</text>
-                                <br/>
-                                <text><b>Gender:</b> {this.state.profileModal.gender}</text>
-                                <br/>
-                                <text><b>Case Number:</b> {this.state.profileModal.caseNumber}</text>
-                                <br/>
-                                <text><b>Marital Status:</b> {this.state.profileModal.maritalStatus}</text>
-                                <br/>
-                                <text><b>Phone Number:</b> {this.state.profileModal.phoneNumber}</text>
-                                <br/>
-                                <text><b>Company:</b> {this.state.profileModal.company}</text>
-                            </rb.Modal.Body>
+                        <rb.Modal show={this.state.showSelection2} onHide={()=>this.setState({showSelection2:false})} size="lg" centered>
+                            <ProfileModal profile={this.state.profileModal}/>
                             <rb.Modal.Footer>
                                 <rb.Button variant="secondary" onClick={()=>this.setState({showSelection2:false})}>
                                     Close
