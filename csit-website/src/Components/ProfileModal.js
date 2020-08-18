@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import * as rb from 'react-bootstrap'
-import Table from './Table'
+import Table3 from './Tables/Table3'
 import { IFrame } from './iframe'
 import Maps from './maps';
 import { tsParenthesizedType } from '@babel/types';
@@ -22,8 +22,7 @@ class ProfileModal extends React.Component{
     }
 
     tableCallback = (dataFromChild) => {
-        console.log("Datafrmchile:" + dataFromChild)
-        // this.setState({datas:dataFromChild})
+        
     }
 
     convertSQLDate(startDate1, endDate, type = undefined){
@@ -106,7 +105,7 @@ class ProfileModal extends React.Component{
                             {/* {this.state.placename} */}
                             {/* Time Span */}
                             {/* {this.convertSQLDate(this.state.datetime[0], this.state.datetime[1], "header")} */}
-                            <Table tableprops={mappingsCC} type = "CC" databack={this.tableCallback()}/>
+                            <Table3 tableprops={mappingsCC} type = "CC" databack={this.tableCallback()}/>
                         </div>
                     </rb.Tab>
 
@@ -116,10 +115,10 @@ class ProfileModal extends React.Component{
                             {/* {this.state.placename} */}
                             {/* Time Span */}
                             {/* {this.convertSQLDate(this.state.datetime[0], this.state.datetime[1], "header")} */}
-                            <Table tableprops={mappingsPATP} type="PATP" databack={this.tableCallback()}/>
+                            <Table3 tableprops={mappingsPATP} type="PATP" databack={this.tableCallback()}/>
                         </div>
                     </rb.Tab>
-                </rb.Tabs>    
+                </rb.Tabs> 
             </div>
         )
     }

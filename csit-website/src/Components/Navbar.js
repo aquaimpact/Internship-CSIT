@@ -4,8 +4,8 @@ import {ReactComponent as Logo} from '../Imgs/upload.svg'
 import Papa from 'papaparse'
 import axios from 'axios'
 import Graph from './Graphs'
-import Table from './Table'
-import Table2 from './Table2'
+import Table from './Tables/Table'
+import Table2 from './Tables/Table2'
 import ProfileModal from './ProfileModal'
 // import Chip from '@material-ui/core/Chip';
 
@@ -68,7 +68,7 @@ class TopNavBar extends React.Component{
                     // Use reader.result
                     const lols = Papa.parse(reader.result, {header: true, skipEmptyLines: true}, )
                     
-                    console.log(lols.data)
+                    // console.log(lols.data)
     
                     // Posting csv data into db
                     // this.postData('"' + JSON.stringify(lols.data) + '"')
@@ -102,7 +102,7 @@ class TopNavBar extends React.Component{
                     // Use reader.result
                     const lols = Papa.parse(reader.result, {header: true, skipEmptyLines: true}, )
                     
-                    console.log(lols.data)
+                    // console.log(lols.data)
     
                     // Posting csv data into db
                     // this.postData('"' + JSON.stringify(lols.data) + '"')
@@ -227,7 +227,7 @@ class TopNavBar extends React.Component{
                 
             })
 
-            console.log("TO: " + IDs)
+            // console.log("TO: " + IDs)
             
             let newItem = {...this.state.CloseContacts, [placename]:IDs}
 
@@ -260,11 +260,11 @@ class TopNavBar extends React.Component{
             let placename = this.state.datas[0].locationShortaddress
             let IDs = this.state.CloseContacts[placename].filter(x => this.state.fromCCID.includes(x) === false).map(x => {return x})
             
-            console.log("From: " + IDs)
+            // console.log("From: " + IDs)
 
             let newItem = {...this.state.CloseContacts, [placename]:IDs}
 
-            console.log("Items:" + newItem)
+            // console.log("Items:" + newItem)
 
             this.setState({CloseContacts:newItem}) 
         }
@@ -419,8 +419,8 @@ class TopNavBar extends React.Component{
 
         let mappingsclose = newlist2
 
-        console.log(this.state.showSelection2)
-        
+        // console.log(this.state.showSelection2)
+
         return (
             <div>
                 <div>

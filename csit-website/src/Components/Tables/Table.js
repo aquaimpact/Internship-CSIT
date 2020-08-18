@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 import * as rb from 'react-bootstrap'
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
-import ProfileModal from './ProfileModal'
+import ProfileModal from '../ProfileModal'
 
 const selectRowProp = {
     mode: 'checkbox',
@@ -16,8 +16,9 @@ let selectedrows = []
 
 const options = {
     onRowClick: function(row) {
-
-        fetch(`http://localhost:8080/getProfile?IDs=${row.UID}`).then((r) => r.json()).then((data) => {that.databack(data)}).catch(err => {console.log(err)})
+        if(that.databack != undefined){
+            fetch(`http://localhost:8080/getProfile?IDs=${row.UID}`).then((r) => r.json()).then((data) => {that.databack(data)}).catch(err => {console.log(err)})
+        }
     }
 };
 
