@@ -419,6 +419,8 @@ class TopNavBar extends React.Component{
 
         let mappingsclose = newlist2
 
+        console.log(this.state.showSelection2)
+        
         return (
             <div>
                 <div>
@@ -578,8 +580,13 @@ class TopNavBar extends React.Component{
                     </div>
                     
                     <div>
-                        <rb.Modal show={this.state.showSelection2} onHide={()=>this.setState({showSelection2:false})} size="lg" centered>
-                            <ProfileModal profile={this.state.profileModal}/>
+                        <rb.Modal show={this.state.showSelection2} onHide={()=>this.setState({showSelection2:false})} size="lg" centered scrollable={true}>
+                            <rb.Modal.Header closeButton>
+                                <rb.Modal.Title>Person Profile</rb.Modal.Title>
+                            </rb.Modal.Header>
+                            <rb.Modal.Body>
+                                <ProfileModal profile={this.state.profileModal}/>
+                            </rb.Modal.Body>
                             <rb.Modal.Footer>
                                 <rb.Button variant="secondary" onClick={()=>this.setState({showSelection2:false})}>
                                     Close

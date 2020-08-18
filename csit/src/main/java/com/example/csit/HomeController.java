@@ -65,7 +65,7 @@ public class HomeController {
         return start1.before(end2) && start2.before(end1);
     }
 
-    @GetMapping ("/getMovementForDate")
+    @GetMapping("/getMovementForDate")
     @CrossOrigin(origins = "http://localhost:3000")
     private Iterable<movementsANDprofile> getMovementWParams(@RequestParam String placeName, @RequestParam String dates, @RequestParam String personName) {
         String P3 = personName;
@@ -86,7 +86,34 @@ public class HomeController {
         return q2;
     }
 
+    @GetMapping("/getMovementbyID")
+    @CrossOrigin(origins = "http://localhost:3000")
+    private Iterable<movementsANDprofile> getSpecificMovement(@RequestParam String IDs) {
+        return movementMapper.getMovementsByUID(Long.parseLong(IDs));
+    }
 
+    @GetMapping("/getPeopleTiming")
+    @CrossOrigin(origins = "http://localhost:3000")
+    private Iterable<movementsANDprofile> getPeopleforTiming(@RequestParam String IDs) {
+        movementsANDprofile person = movementMapper.getMovementsByMID(Long.parseLong(IDs));
+        Date start = person.getDatetimeEntered();
+        Date end = person.getDatetimeLeft();
+        String placeName = person.getLocationShortaddress();
+
+        List<movementsANDprofile> q = movementMapper.getMovementsByName(placeName);
+
+        List<movementsANDprofile> q2 = new ArrayList<>();
+        for(movementsANDprofile movementsANDprofile: q){
+
+            boolean overlap = isOverlapping(start, end, movementsANDprofile.getDatetimeEntered(), movementsANDprofile.getDatetimeLeft());
+            if(overlap){
+                if(movementsANDprofile.getId() != person.getId()){
+                    q2.add(movementsANDprofile);
+                }
+            }
+        }
+        return q2;
+    }
 //    @PostMapping("/addMovement")
 //    @CrossOrigin(origins = "http://localhost:3000")
 //    private void newMovement(@RequestBody ArrayList<Movement> movements){

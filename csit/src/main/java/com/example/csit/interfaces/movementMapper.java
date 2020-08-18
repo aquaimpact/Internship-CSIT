@@ -33,4 +33,9 @@ public interface movementMapper {
     @Select("Select * from test.movement m INNER JOIN test.peopleprofile p on m.\"peopleProfileId\" = p.id WHERE\"locationShortaddress\" = #{location}")
     List<movementsANDprofile> getMovementsByName(@Param("location") String location);
 
+    @Select("Select * from test.movement m INNER JOIN test.peopleprofile p on m.\"peopleProfileId\" = p.id WHERE p.id = #{IDs}")
+    List<movementsANDprofile> getMovementsByUID(@Param("IDs") long IDs);
+
+    @Select("Select * from test.movement m INNER JOIN test.peopleprofile p on m.\"peopleProfileId\" = p.id WHERE m.id = #{IDs}")
+    movementsANDprofile getMovementsByMID(@Param("IDs") long IDs);
 }
