@@ -3,7 +3,7 @@ import * as rb from 'react-bootstrap'
 import {ReactComponent as Logo} from '../Imgs/upload.svg'
 import Papa from 'papaparse'
 import axios from 'axios'
-import Graph from './Graphs'
+import Graph from './Graphs/Graphs'
 import Table from './Tables/Table'
 import Table2 from './Tables/Table2'
 import ProfileModal from './ProfileModal'
@@ -511,23 +511,37 @@ class TopNavBar extends React.Component{
                         <rb.Tabs defaultActiveKey="home" id="uncontrolled-tab-example">
                             <rb.Tab eventKey="home" title="CONFIRMED CASES">
                                 <div style={{textAlign: "left", height:"100%"}}>
-                                    {/* <Chip label="Basic" /> */}
-                                    {/* PlaceName */}
-                                    {this.state.placename}
-                                    {/* Time Span */}
-                                    {this.convertSQLDate(this.state.datetime[0], this.state.datetime[1], "header")}
+                                    <h5>
+                                        {/* <Chip label="Basic" /> */}
+                                        {/* PlaceName */}
+                                        <rb.Badge pill variant="primary">
+                                            {this.state.placename}
+                                        </rb.Badge>
+                                        {' '}
+                                        {/* Time Span */}
+                                        <rb.Badge pill variant="primary">
+                                            {this.convertSQLDate(this.state.datetime[0], this.state.datetime[1], "header")}
+                                        </rb.Badge>
+                                    </h5>
                                     <Table tableprops={mappingsCC} display={displaySetting2} type = "CC" databack={this.databackTable}/>
                                 </div>
                             </rb.Tab>
 
                             <rb.Tab eventKey="profile" title="CLOSE CONTACT">
-                            <div style={{textAlign: "left", height:"100%"}}>
-                                    {/* PlaceName */}
-                                    {this.state.placename}
-                                    {/* Time Span */}
-                                    {this.convertSQLDate(this.state.datetime[0], this.state.datetime[1], "header")}
+                                <div style={{textAlign: "left", height:"100%"}}>
+                                    <h5>
+                                        {/* <Chip label="Basic" /> */}
+                                        {/* PlaceName */}
+                                        <rb.Badge pill variant="primary">
+                                            {this.state.placename}
+                                        </rb.Badge>
+                                        {' '}
+                                        {/* Time Span */}
+                                        <rb.Badge pill variant="primary">
+                                            {this.convertSQLDate(this.state.datetime[0], this.state.datetime[1], "header")}
+                                        </rb.Badge>
+                                    </h5>
                                     <Table tableprops={mappingsclose} display={displaySetting2} type="PATP" databack={this.databackTable}/>
-                                    <br/>
                                     <rb.Button onClick={() => this.setState({showSelection:true})}>
                                         Manual Import
                                     </rb.Button>
@@ -536,10 +550,18 @@ class TopNavBar extends React.Component{
 
                             <rb.Tab eventKey="contact" title="PUBLIC AT THE PLACE">
                                 <div style={{textAlign: "left", height:"100%"}}>
-                                    {/* PlaceName */}
-                                    {this.state.placename}
-                                    {/* Time Span */}
-                                    {this.convertSQLDate(this.state.datetime[0], this.state.datetime[1], "header")}
+                                    <h5>
+                                        {/* <Chip label="Basic" /> */}
+                                        {/* PlaceName */}
+                                        <rb.Badge pill variant="primary">
+                                            {this.state.placename}
+                                        </rb.Badge>
+                                        {' '}
+                                        {/* Time Span */}
+                                        <rb.Badge pill variant="primary">
+                                            {this.convertSQLDate(this.state.datetime[0], this.state.datetime[1], "header")}
+                                        </rb.Badge>
+                                    </h5>
                                     <Table tableprops={mappingsPATP} display={displaySetting2} type="PATP" databack={this.databackTable}/>
                                 </div>
                             </rb.Tab>

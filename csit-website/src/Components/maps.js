@@ -22,7 +22,6 @@ class Maps extends React.Component{
         };
 
         this.mapContainer = React.createRef();
-        
     }
 
     getMovements(id){
@@ -31,6 +30,12 @@ class Maps extends React.Component{
 
     componentDidMount() {
         this.getMovements(this.props.UID)
+        map = new mapboxgl.Map({
+            container: this.mapContainer,
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [this.state.lng, this.state.lat],
+            zoom: this.state.zoom
+        });
     }
 
     getDatetime(datetime, selection){
@@ -73,13 +78,27 @@ class Maps extends React.Component{
     }
 
     componentDidUpdate(){
+        
+        // var mapLayer = map.getLayer('places')
 
-        const map = new mapboxgl.Map({
-            container: this.mapContainer,
-            style: 'mapbox://styles/mapbox/streets-v11',
-            center: [this.state.lng, this.state.lat],
-            zoom: this.state.zoom
-        });
+        // if(typeof mapLayer !== 'undefined') {
+        //     // Remove map layer & source.
+        //     map.removeLayer('places').removeSource('places');
+        // }
+
+        // var mapLayer2 = map.getLayer('route')
+
+        // if(typeof mapLayer2 !== 'undefined') {
+        //     // Remove map layer & source.
+        //     map.removeLayer('route').removeSource('route');
+        // }
+
+        // const map = new mapboxgl.Map({
+        //     container: this.mapContainer,
+        //     style: 'mapbox://styles/mapbox/streets-v11',
+        //     center: [this.state.lng, this.state.lat],
+        //     zoom: this.state.zoom
+        // });
 
         let UPoints = this.state.movements.map(x => {
             return({
