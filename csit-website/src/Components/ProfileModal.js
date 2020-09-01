@@ -3,22 +3,25 @@ import * as rb from 'react-bootstrap'
 import Table3 from './Tables/Table3'
 import { IFrame } from './iframe'
 import Maps from './maps';
-import { tsParenthesizedType } from '@babel/types';
-
-
+import TimelineChart from './Timelines/TimelineChart'
 
 class ProfileModal extends React.Component{
 
     constructor(props){
         super(props)
         this.state = {
-            datas:[]
+            datas:[],
+            enter:"",
+            leave:"",
         }
     }
 
+    // For the Map
     myCallback = (dataFromChild) => {
         // console.log("Datafrmchile:" + dataFromChild)
-        this.setState({datas:dataFromChild})
+        this.setState({datas:dataFromChild.data})
+        this.setState({enter:dataFromChild.enter})
+        this.setState({leave:dataFromChild.leave})
     }
 
     tableCallback = (dataFromChild) => {
@@ -70,6 +73,18 @@ class ProfileModal extends React.Component{
             })
         })
 
+        let main = this.state.datas[0]
+        let placename
+        let time
+        
+
+        if(main != undefined){
+            placename = main.locationShortaddress
+            if(this.state.enter !== "" && this.state.leave !== ""){
+                time = this.convertSQLDate(this.state.enter, this.state.leave, "header")
+            }
+        }
+       
         return(
             <div>
                 <text style={{fontSize:"20px", color:"#424761"}}><b>Name:</b> {this.props.profile.firstName + " " + this.props.profile.lastName}</text>
@@ -90,11 +105,11 @@ class ProfileModal extends React.Component{
                 <text style={{fontSize:"30px", color:"#424761"}}><b>Movement Visualisation:</b></text>
                 <br/>
 
-                {/* <IFrame><maps/></IFrame> */}
-
                 <Maps UID={this.props.profile.id} callbackFromParent={this.myCallback}/>
 
-                <text style={{fontSize:"30px", color:"#424761"}}><b>Breakdown of movement:</b></text>
+                <TimelineChart UID={this.props.profile.id}/>
+
+                <text style={{fontSize:"30px", color:"#424761"}}><b>Breakdown of movement:</b> <text style={{fontSize:"20px", color:"#424761"}}><rb.Badge>{placename}</rb.Badge></text>{' '} <text style={{fontSize:"20px", color:"#424761"}}><rb.Badge>{time}</rb.Badge></text></text>
                 <br/>
 
                 <rb.Tabs defaultActiveKey="home" id="uncontrolled-tab-example">

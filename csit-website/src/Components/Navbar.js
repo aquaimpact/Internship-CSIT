@@ -7,6 +7,7 @@ import Graph from './Graphs/Graphs'
 import Table from './Tables/Table'
 import Table2 from './Tables/Table2'
 import ProfileModal from './ProfileModal'
+import MainMap from './MainMap';
 // import Chip from '@material-ui/core/Chip';
 
 
@@ -38,6 +39,7 @@ class TopNavBar extends React.Component{
             fromCCID:[],
             profileModal:{},
             showSelection2: false,
+            mapData:[],
         }
     }
 
@@ -47,14 +49,17 @@ class TopNavBar extends React.Component{
         return
     }
 
+    // Suspect Profile File Upload
     handleClick(e) {
         this.refs.fileUploader.click();
     }
 
+    //Suspect Movement File Upload
     handleClick2(e) {
         this.refs.fileUploader2.click();
     }
 
+    // Suspect File Upload
     uploadFile(event) {
         
         const file = event.target.files[0]
@@ -89,6 +94,7 @@ class TopNavBar extends React.Component{
         }
     }
 
+    // Movement File Upload
     uploadFile2(event) {
         
         const file = event.target.files[0]
@@ -141,27 +147,62 @@ class TopNavBar extends React.Component{
         return finalDate.getTime();
     }
 
+    //// ### UNCOMMENT FOR GANTT CHART ###
+    // Gantt Chart Data Formatter from movements and suspects
     populateGraph1(){
         let series2 = []
-        this.state.suspectCases.forEach(suspect => {
+
+        var string = this.state.mapData;
+        var numbers = string.match(/\d+/g).map(Number);
+        // console.log(numbers)
+
+        // console.log(this.state.suspectCases)
+        numbers.forEach(x => {
             let data = []
 
-            this.state.movements.filter(moves => moves.suspectId === suspect.id).forEach(movement => {
-                data.push(
-                    {
-                        x: movement.locationShortaddress,
-                        y: [this.convertDate(movement.datetimeEntered),this.convertDate(movement.datetimeLeft)]
-                    }
-                )
-            })
-
+            let m1 = this.state.movements.filter(moves => moves.id === x.toString())[0]
+            let p1 = this.state.suspectCases.filter(sus => sus.id === m1.suspectId)[0]
+            data.push(
+                {
+                    x: m1.locationShortaddress,
+                    y: [this.convertDate(m1.datetimeEntered),this.convertDate(m1.datetimeLeft)]
+                }
+            )
+            
             series2.push(
                 {
-                    name: suspect.firstName + " " + suspect.lastName,
+                    name: p1.firstName + " " + p1.lastName,
                     data: data
                 }
             )
         })
+
+        console.log(series2)
+
+        // console.log(this.state.mapData[0])
+        // if(Array.isArray(this.state.mapData)){
+        //     console.log("NAY")
+        //     
+        // }
+        // this.state.suspectCases.forEach(suspect => {
+        //     let data = []
+
+        //     this.state.movements.filter(moves => moves.suspectId === suspect.id).forEach(movement => {
+        //         data.push(
+        //             {
+        //                 x: movement.locationShortaddress,
+        //                 y: [this.convertDate(movement.datetimeEntered),this.convertDate(movement.datetimeLeft)]
+        //             }
+        //         )
+        //     })
+
+        //     series2.push(
+        //         {
+        //             name: suspect.firstName + " " + suspect.lastName,
+        //             data: data
+        //         }
+        //     )
+        // })
         return series2
     }
 
@@ -189,7 +230,6 @@ class TopNavBar extends React.Component{
         // return date2[1]
     }
 
-    // Still kkeeps adding values to the list
     myCallback = (dataFromChild) => {
         // console.log("Data1:" + dataFromChild)
         this.setState({CCID:dataFromChild})
@@ -209,7 +249,7 @@ class TopNavBar extends React.Component{
     isEmptyObject(obj) {
         return !!obj && Object.keys(obj).length === 0 && obj.constructor === Object;
     }
-
+    
     toCCClicked = () => {
         let IDs = []
 
@@ -271,18 +311,23 @@ class TopNavBar extends React.Component{
 
     }
 
+    dataRetrievedMap = (dataFromChild) => {
+        this.setState({mapData: dataFromChild})
+    }
+
     render() {
 
         let suspected = this.state.dataList.map(sus => <rb.NavDropdown.Item eventKey={Math.random()}>{sus}</rb.NavDropdown.Item>)
         
         let displaySetting, displaySetting2, seriesdata
+
+        //// ### UNCOMMENT FOR GANTT CHART ###
         let test
 
         if(this.state.suspectCases.length > 0 && this.state.movements.length > 0 ){
             displaySetting = "none"
             displaySetting2 = "block"
             
-            test = this.populateGraph1()
         }
         else{
             displaySetting = "block"
@@ -295,6 +340,14 @@ class TopNavBar extends React.Component{
 
         let placename;
 
+        //// ### UNCOMMENT FOR GANTT CHART ###
+        if(this.state.mapData != ""){
+            console.log("YAY")
+            test = this.populateGraph1()
+        }
+        
+
+        //// ### UNCOMMENT FOR GANTT CHART ###
         if(test !== undefined){
             var options = {
                 options: {
@@ -310,6 +363,7 @@ class TopNavBar extends React.Component{
 
                                 // For the time
                                 // console.log(test[config.seriesIndex].data[config.dataPointIndex].y)
+                                
                                 // For the Name
                                 // console.log(test[config.seriesIndex].name)
 
@@ -342,6 +396,7 @@ class TopNavBar extends React.Component{
             graph1 = <Graph display={displaySetting2} options={options.options} series={test} tool/>
         }
 
+        // Creating the COnfirmed Cases
         let mappingsCC = this.state.datas.filter(data => data.caseNumber != null).map(data => {
             return({
                 caseNumber:data.caseNumber,
@@ -352,6 +407,7 @@ class TopNavBar extends React.Component{
             })
         })
 
+        // Creating the Public at the place List
         let mappingsPATP
         
         // Checks if there are any close contacts be begin with. If there are none than the below will run
@@ -401,6 +457,7 @@ class TopNavBar extends React.Component{
             mappingsPATP = newlist
         }
 
+        //Mapping the Contacts
         let newlist2 = []
 
         this.state.datas.filter(data => data.caseNumber == null).map(data =>{
@@ -446,10 +503,12 @@ class TopNavBar extends React.Component{
                                 IMPORT SUSPECTED CASES
                             </rb.Button>
                             <input type="file" id="file" ref="fileUploader" style={{display: "none"}} onChange={this.uploadFile} multiple/> */}
+
                         </rb.Navbar.Collapse>
                     </rb.Navbar>
                 </div>
                 
+                {/* Upload Case Files */}
                 <div>
                     <rb.Modal show={this.state.showModal} onHide={() => this.setState({showModal: false}) } animation={false}>
                         <rb.Modal.Header closeButton>
@@ -485,7 +544,8 @@ class TopNavBar extends React.Component{
                         </rb.Modal.Body>
                     </rb.Modal>
                 </div>
-
+                
+                {/* Error msg when upload wrong file */}
                 <div>
                     <rb.Toast onClose={() => this.setState({error: false})} show={this.state.error}>
                         <rb.Toast.Header>
@@ -495,18 +555,25 @@ class TopNavBar extends React.Component{
                         <rb.Toast.Body>{this.state.errorMsg}</rb.Toast.Body>
                     </rb.Toast>
                 </div>
-                
-                <div>
-                    {/* {this.state.suspectCases} */}
-                </div>
 
+                {/* Import Some Data to Begin Text */}
                 <div style={{display:displaySetting, height:"100%"}}>
                     <h1 style={{color:"#424761", textAlign:"center", marginTop:"15%"}}>Import some data to begin</h1>
                 </div>
+
                 <div style={{display:displaySetting2}}>
+
+                    {/* Gantt Chart / Map */}
                     <div style={{textAlign: "left", height:"100%", float:"left", width:"50%"}}>
+
+                        {/* UNCOMMENT FOR MAP */}
+                        <MainMap profile={this.state.suspectCases} movement={this.state.movements} dataRetrieved={this.dataRetrievedMap}/>
+
+                        {/* ### UNCOMMENT FOR GANTT CHART ### */}
                         {graph1}
                     </div>
+                    
+                    {/* Tabs */}
                     <div style={{float:"left", width:"50%"}}>
                         <rb.Tabs defaultActiveKey="home" id="uncontrolled-tab-example">
                             <rb.Tab eventKey="home" title="CONFIRMED CASES">
@@ -530,7 +597,6 @@ class TopNavBar extends React.Component{
                             <rb.Tab eventKey="profile" title="CLOSE CONTACT">
                                 <div style={{textAlign: "left", height:"100%"}}>
                                     <h5>
-                                        {/* <Chip label="Basic" /> */}
                                         {/* PlaceName */}
                                         <rb.Badge pill variant="primary">
                                             {this.state.placename}
@@ -551,7 +617,6 @@ class TopNavBar extends React.Component{
                             <rb.Tab eventKey="contact" title="PUBLIC AT THE PLACE">
                                 <div style={{textAlign: "left", height:"100%"}}>
                                     <h5>
-                                        {/* <Chip label="Basic" /> */}
                                         {/* PlaceName */}
                                         <rb.Badge pill variant="primary">
                                             {this.state.placename}
@@ -578,7 +643,7 @@ class TopNavBar extends React.Component{
                                 <div style={{float:"left", textAlign:"center", width:"40%"}}>
                                     <text fontSize="20px"><b>Close Contact With Public</b></text>
                                     <div style={{backgroundColor:"#F9F9F9", }}>
-                                        <Table2 tableprops={mappingsclose} display={displaySetting2} type="modal-edit" callbackFromParent={this.myCallback2}/>
+                                        <Table2 tableprops={mappingsclose} display={displaySetting2} type="modal-edit" callbackFromParent={this.myCallback2} databack={this.databackTable}/>
                                     </div>
                                 </div>
                                 <div style={{float:"left", textAlign:"center", width:"20%", alignItems:"center", justifyContent:"center"}}>
@@ -589,7 +654,7 @@ class TopNavBar extends React.Component{
                                 <div style={{float:"right", textAlign:"center", width:"40%"}}>
                                     <text fontSize="20px"><b>Public At The Place</b></text>
                                     <div style={{backgroundColor:"#F9F9F9"}}>
-                                        <Table tableprops={mappingsPATP} display={displaySetting2} type="modal-edit" callbackFromParent={this.myCallback}/>
+                                        <Table tableprops={mappingsPATP} display={displaySetting2} type="modal-edit" callbackFromParent={this.myCallback} databack={this.databackTable}/>
                                     </div>
                                 </div>
                             </rb.Modal.Body>
@@ -601,8 +666,9 @@ class TopNavBar extends React.Component{
                         </rb.Modal>
                     </div>
                     
+                    {/* Profile Page */}
                     <div>
-                        <rb.Modal show={this.state.showSelection2} onHide={()=>this.setState({showSelection2:false})} size="lg" centered scrollable={true}>
+                        <rb.Modal show={this.state.showSelection2} onHide={()=>this.setState({showSelection2:false})} size="xl" centered scrollable={true}>
                             <rb.Modal.Header closeButton>
                                 <rb.Modal.Title>Person Profile</rb.Modal.Title>
                             </rb.Modal.Header>

@@ -103,11 +103,11 @@ public class HomeController {
         List<movementsANDprofile> q = movementMapper.getMovementsByName(placeName);
 
         List<movementsANDprofile> q2 = new ArrayList<>();
-        for(movementsANDprofile movementsANDprofile: q){
+        for (movementsANDprofile movementsANDprofile : q) {
 
             boolean overlap = isOverlapping(start, end, movementsANDprofile.getDatetimeEntered(), movementsANDprofile.getDatetimeLeft());
-            if(overlap){
-                if(movementsANDprofile.getId() != person.getId()){
+            if (overlap) {
+                if (movementsANDprofile.getId() != person.getId()) {
                     q2.add(movementsANDprofile);
                 }
             }

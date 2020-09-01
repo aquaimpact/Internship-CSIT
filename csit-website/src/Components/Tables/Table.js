@@ -16,9 +16,7 @@ let selectedrows = []
 
 const options = {
     onRowClick: function(row) {
-        if(that.databack != undefined){
-            fetch(`http://localhost:8080/getProfile?IDs=${row.UID}`).then((r) => r.json()).then((data) => {that.databack(data)}).catch(err => {console.log(err)})
-        }
+        fetch(`http://localhost:8080/getProfile?IDs=${row.UID}`).then((r) => r.json()).then((data) => {that.databack(data)}).catch(err => {console.log(err)})
     }
 };
 

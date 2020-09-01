@@ -17,8 +17,6 @@ class Maps extends React.Component{
             lat: 1.290270,
             zoom: 9.5,
             movements:[],
-            maps:{},
-            profiles:[],
         };
 
         this.mapContainer = React.createRef();
@@ -72,9 +70,10 @@ class Maps extends React.Component{
         return finalDatetime
     }
 
-    getPeople(id)
+    getPeople(id, enter, leave)
     {
-        fetch(`http://localhost:8080/getPeopleTiming?IDs=${id}`).then(r => r.json()).then((data) => {this.props.callbackFromParent(data)}).catch(err => {console.log(err)})
+
+        fetch(`http://localhost:8080/getPeopleTiming?IDs=${id}`).then(r => r.json()).then((data) => {this.props.callbackFromParent({data:data, enter:enter, leave:leave})}).catch(err => {console.log(err)})
     }
 
     componentDidUpdate(){
@@ -105,6 +104,8 @@ class Maps extends React.Component{
                 'type': 'Feature',
                 'properties': {
                     'movementID': x.id,
+                    'enter': x.datetimeEntered,
+                    'leave': x.datetimeLeft,
                     'description':
                         `<strong>${x.locationShortaddress}</strong><p>Time Entered: ${this.getDatetime(x.datetimeEntered, 't')}</p><p>Time Left: ${this.getDatetime(x.datetimeLeft, 't')}</p><p>Date: ${this.getDatetime(x.datetimeLeft, 'd')}</p>`
                     },
@@ -129,25 +130,6 @@ class Maps extends React.Component{
             function(error, image) {
                 if (error) throw error;
                 map.addImage('custom-marker', image);
-             
-                map.addSource('places', {
-                    'type': 'geojson',
-                    'data': {
-                        'type': 'FeatureCollection',
-                        'features': UPoints
-                    }
-                });
-             
-                // Add a layer showing the places.
-                map.addLayer({
-                    'id': 'places',
-                    'type': 'symbol',
-                    'source': 'places',
-                    'layout': {
-                        'icon-image': 'custom-marker',
-                        'icon-allow-overlap': true
-                    }
-                });
 
                 map.addSource('route', {
                     'type': 'geojson',
@@ -175,6 +157,27 @@ class Maps extends React.Component{
                     }
                 });
 
+                map.addSource('places', {
+                    'type': 'geojson',
+                    'data': {
+                        'type': 'FeatureCollection',
+                        'features': UPoints
+                    }
+                });
+             
+                // Add a layer showing the places.
+                map.addLayer({
+                    'id': 'places',
+                    'type': 'symbol',
+                    'source': 'places',
+                    'layout': {
+                        // "line-cap": "round",
+                        // "line-join": "round"
+                        'icon-image': 'custom-marker',
+                        'icon-allow-overlap': true
+                    }
+                });
+
             });
              
             // Create a popup, but don't add it to the map yet.
@@ -186,8 +189,10 @@ class Maps extends React.Component{
             map.on('click', 'places', function(e){
                 var description = e.features[0].properties.description;
                 var movementID = e.features[0].properties.movementID;
+                var enter = e.features[0].properties.enter;
+                var leave = e.features[0].properties.leave;
                 // console.log(movementID)
-                that.getPeople(movementID)
+                that.getPeople(movementID, enter, leave)
             });
 
             map.on('mouseenter', 'places', function(e) {
