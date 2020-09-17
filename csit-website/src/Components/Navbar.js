@@ -15,7 +15,7 @@ class TopNavBar extends React.Component{
 
     constructor(props){
         super(props);
-
+        
         this.uploadFile = this.uploadFile.bind(this);
         this.uploadFile2 = this.uploadFile2.bind(this);
         this.handleClick = this.handleClick.bind(this);
@@ -49,81 +49,81 @@ class TopNavBar extends React.Component{
         return
     }
 
-    // Suspect Profile File Upload
-    handleClick(e) {
-        this.refs.fileUploader.click();
-    }
+    // // Suspect Profile File Upload
+    // handleClick(e) {
+    //     this.refs.fileUploader.click();
+    // }
 
-    //Suspect Movement File Upload
-    handleClick2(e) {
-        this.refs.fileUploader2.click();
-    }
+    // //Suspect Movement File Upload
+    // handleClick2(e) {
+    //     this.refs.fileUploader2.click();
+    // }
 
-    // Suspect File Upload
-    uploadFile(event) {
+    // // Suspect File Upload
+    // uploadFile(event) {
         
-        const file = event.target.files[0]
+    //     const file = event.target.files[0]
 
-        if(file){
-            if (file.name.includes("_suspected")){
+    //     if(file){
+    //         if (file.name.includes("_suspected")){
 
-                this.setState({filenames:[...this.state.filenames, file.name]})
-                const reader = new FileReader();
-                reader.onload = () => {
-                    // Use reader.result
-                    const lols = Papa.parse(reader.result, {header: true, skipEmptyLines: true}, )
+    //             this.setState({filenames:[...this.state.filenames, file.name]})
+    //             const reader = new FileReader();
+    //             reader.onload = () => {
+    //                 // Use reader.result
+    //                 const lols = Papa.parse(reader.result, {header: true, skipEmptyLines: true}, )
                     
-                    // console.log(lols.data)
+    //                 // console.log(lols.data)
     
-                    // Posting csv data into db
-                    // this.postData('"' + JSON.stringify(lols.data) + '"')
-                    // this.postSuspects(JSON.stringify(lols.data))
+    //                 // Posting csv data into db
+    //                 // this.postData('"' + JSON.stringify(lols.data) + '"')
+    //                 // this.postSuspects(JSON.stringify(lols.data))
     
-                    // Adds names into dropdown
-                    this.setState({dataList: ["All Suspected Cases", ...lols.data.map(names => names.firstName + " " + names.lastName)]})
+    //                 // Adds names into dropdown
+    //                 this.setState({dataList: ["All Suspected Cases", ...lols.data.map(names => names.firstName + " " + names.lastName)]})
     
-                    const data = lols.data
-                    this.setState({suspectCases: data})
-                }
-                reader.readAsText(file)
-            }
-            else{
-                this.setState({error:true, errorMsg:"You have uploaded invalid files! Please rename the file to <filename>_suspected (For suspected cases)"})
-                return
-            }
-        }
-    }
+    //                 const data = lols.data
+    //                 this.setState({suspectCases: data})
+    //             }
+    //             reader.readAsText(file)
+    //         }
+    //         else{
+    //             this.setState({error:true, errorMsg:"You have uploaded invalid files! Please rename the file to <filename>_suspected (For suspected cases)"})
+    //             return
+    //         }
+    //     }
+    // }
 
-    // Movement File Upload
-    uploadFile2(event) {
+    // // Movement File Upload
+    // uploadFile2(event) {
         
-        const file = event.target.files[0]
+    //     const file = event.target.files[0]
 
-        if(file){
-            if (file.name.includes("_movements")){
+    //     if(file){
+    //         if (file.name.includes("_movements")){
                 
-                this.setState({filenames:[...this.state.filenames, file.name]})
-                const reader = new FileReader();
-                reader.onload = () => {
-                    // Use reader.result
-                    const lols = Papa.parse(reader.result, {header: true, skipEmptyLines: true}, )
+    //             this.setState({filenames:[...this.state.filenames, file.name]})
+    //             const reader = new FileReader();
+    //             reader.onload = () => {
+    //                 // Use reader.result
+    //                 const lols = Papa.parse(reader.result, {header: true, skipEmptyLines: true}, )
                     
-                    // console.log(lols.data)
+    //                 // console.log(lols.data)
     
-                    // Posting csv data into db
-                    // this.postData('"' + JSON.stringify(lols.data) + '"')
-                    // this.postMovements(JSON.stringify(lols.data))
-                    const data = lols.data
-                    this.setState({movements: data})
-                }
-                reader.readAsText(file)
-            }
-            else{
-                this.setState({error:true, errorMsg:"You have uploaded invalid files! Please rename the file to <filename>_movement (For suspected case movement)"})
-                return
-            }
-        }
-    }
+    //                 // Posting csv data into db
+    //                 // this.postData('"' + JSON.stringify(lols.data) + '"')
+    //                 // this.postMovements(JSON.stringify(lols.data))
+    //                 const data = lols.data
+    //                 this.setState({movements: data})
+    //             }
+    //             reader.readAsText(file)
+    //         }
+    //         else{
+    //             this.setState({error:true, errorMsg:"You have uploaded invalid files! Please rename the file to <filename>_movement (For suspected case movement)"})
+    //             return
+    //         }
+    //     }
+    // }
 
     dropdownClicked(text) {
         this.setState({dropDownValue: text})
@@ -480,7 +480,7 @@ class TopNavBar extends React.Component{
 
         return (
             <div>
-                <div>
+                {/* <div>
                     <rb.Navbar bg="white">
                         <rb.Navbar.Brand style={{fontSize:30}}>
                             Filter:
@@ -498,18 +498,18 @@ class TopNavBar extends React.Component{
                                 IMPORT SUSPECTED CASES
                             </rb.Button>
 
-                            {/* <rb.Button className="text-right" id="importCases" style={{textSize:15}} onClick={this.handleClick.bind(this)}>
+                            <rb.Button className="text-right" id="importCases" style={{textSize:15}} onClick={this.handleClick.bind(this)}>
                                 <Logo style={{width:30, height:30, paddingRight:7.4}} id="uploadLogo"/>
                                 IMPORT SUSPECTED CASES
                             </rb.Button>
-                            <input type="file" id="file" ref="fileUploader" style={{display: "none"}} onChange={this.uploadFile} multiple/> */}
+                            <input type="file" id="file" ref="fileUploader" style={{display: "none"}} onChange={this.uploadFile} multiple/>
 
                         </rb.Navbar.Collapse>
                     </rb.Navbar>
-                </div>
+                </div> */}
                 
                 {/* Upload Case Files */}
-                <div>
+                {/* <div>
                     <rb.Modal show={this.state.showModal} onHide={() => this.setState({showModal: false}) } animation={false}>
                         <rb.Modal.Header closeButton>
                             <rb.Modal.Title>Upload Suspect Cases Files</rb.Modal.Title>
@@ -543,23 +543,23 @@ class TopNavBar extends React.Component{
                             </div>
                         </rb.Modal.Body>
                     </rb.Modal>
-                </div>
+                </div> */}
                 
                 {/* Error msg when upload wrong file */}
-                <div>
+                {/* <div>
                     <rb.Toast onClose={() => this.setState({error: false})} show={this.state.error}>
                         <rb.Toast.Header>
                             <strong className="mr-auto">Error!</strong>
-                            {/* <small>11 mins ago</small> */}
+                            <small>11 mins ago</small>
                         </rb.Toast.Header>
                         <rb.Toast.Body>{this.state.errorMsg}</rb.Toast.Body>
                     </rb.Toast>
-                </div>
+                </div> */}
 
                 {/* Import Some Data to Begin Text */}
-                <div style={{display:displaySetting, height:"100%"}}>
+                {/* <div style={{display:displaySetting, height:"100%"}}>
                     <h1 style={{color:"#424761", textAlign:"center", marginTop:"15%"}}>Import some data to begin</h1>
-                </div>
+                </div> */}
 
                 <div style={{display:displaySetting2}}>
 
@@ -567,10 +567,10 @@ class TopNavBar extends React.Component{
                     <div style={{textAlign: "left", height:"100%", float:"left", width:"50%"}}>
 
                         {/* UNCOMMENT FOR MAP */}
-                        <MainMap profile={this.state.suspectCases} movement={this.state.movements} dataRetrieved={this.dataRetrievedMap}/>
+                        {/* <MainMap profile={this.state.suspectCases} movement={this.state.movements} dataRetrieved={this.dataRetrievedMap}/> */}
 
                         {/* ### UNCOMMENT FOR GANTT CHART ### */}
-                        {graph1}
+                        {/* {graph1} */}
                     </div>
                     
                     {/* Tabs */}
