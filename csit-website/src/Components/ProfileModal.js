@@ -54,7 +54,7 @@ class ProfileModal extends React.Component{
 
     render(){
 
-        let mappingsCC = this.state.datas.filter(data => data.caseNumber != null).map(data => {
+        let mappingsCC = this.state.datas.filter(data => data.caseNumber !== null).map(data => {
             return({
                 caseNumber:data.caseNumber,
                 UID:data.peopleProfileId,
@@ -64,7 +64,7 @@ class ProfileModal extends React.Component{
             })
         })
 
-        let mappingsPATP = this.state.datas.filter(data => data.caseNumber == null).map(data =>{
+        let mappingsPATP = this.state.datas.filter(data => data.caseNumber === null).map(data =>{
             return({
                 UID:data.peopleProfileId,
                 name:data.firstName + " " + data.lastName,
@@ -89,24 +89,30 @@ class ProfileModal extends React.Component{
             <div>
                 <text style={{fontSize:"20px", color:"#424761"}}><b>Name:</b> {this.props.profile.firstName + " " + this.props.profile.lastName}</text>
                 <br/>
+
                 <text style={{fontSize:"20px", color:"#424761"}}><b>Gender:</b> {this.props.profile.gender}</text>
                 <br/>
+
                 <text style={{fontSize:"20px", color:"#424761"}}><b>Case Number:</b> {this.props.profile.caseNumber}</text>
                 <br/>
+
                 <text style={{fontSize:"20px", color:"#424761"}}><b>Marital Status:</b> {this.props.profile.maritalStatus}</text>
                 <br/>
+
                 <text style={{fontSize:"20px", color:"#424761"}}><b>Phone Number:</b> {this.props.profile.phoneNumber}</text>
                 <br/>
+
                 <text style={{fontSize:"20px", color:"#424761"}}><b>Company:</b> {this.props.profile.company}</text>
                 <br/>
                 <br/>
-                <text style={{fontSize:"30px", color:"#424761"}}><b>Case Summary:</b></text>
-                <br/>
+
                 <text style={{fontSize:"30px", color:"#424761"}}><b>Movement Visualisation:</b></text>
                 <br/>
-
                 <Maps UID={this.props.profile.id} callbackFromParent={this.myCallback}/>
+                <br/>
 
+                <text style={{fontSize:"30px", color:"#424761"}}><b>Timeline:</b></text>
+                <br/>
                 <TimelineChart UID={this.props.profile.id}/>
 
                 <text style={{fontSize:"30px", color:"#424761"}}><b>Breakdown of movement:</b> <text style={{fontSize:"20px", color:"#424761"}}><rb.Badge>{placename}</rb.Badge></text>{' '} <text style={{fontSize:"20px", color:"#424761"}}><rb.Badge>{time}</rb.Badge></text></text>

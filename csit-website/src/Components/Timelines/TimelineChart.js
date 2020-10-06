@@ -72,7 +72,7 @@ class TimelineChart extends React.Component{
             let range = moment.range(x.datetimeEntered, x.datetimeLeft)
 
             let tableprops
-            if(this.state.retrieved[count] != undefined){
+            if(this.state.retrieved[count] !== undefined){
                 tableprops = this.state.retrieved[count].map(data => {
 
                     let range2 = moment.range(data.datetimeEntered, data.datetimeLeft)
@@ -93,7 +93,9 @@ class TimelineChart extends React.Component{
                     className="vertical-timeline-element--work"
                     date={this.convertSQLDate(x.datetimeEntered, x.datetimeLeft)}
                     iconStyle={{ background: 'rgb(33, 150, 243)', color: '#fff' }}>
+
                     {/* <h3 className="vertical-timeline-element-title">{x.locationShortaddress}</h3> */}
+
                     <h4 className="vertical-timeline-element-subtitle">{x.locationShortaddress}</h4>
                     <br/>
                     <TimelineTable tableprops={tableprops}/>
@@ -102,7 +104,7 @@ class TimelineChart extends React.Component{
         })
 
         return(
-            <div style={{backgroundColor:"#E3E3E3"}}>
+            <div style={{backgroundColor:"#FFFFFF"}}>
                 <VerticalTimeline layout="1-column">
                     {events}
                 </VerticalTimeline>

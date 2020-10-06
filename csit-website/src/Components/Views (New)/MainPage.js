@@ -8,6 +8,7 @@ import Table from '../Tables/Table'
 import Table2 from '../Tables/Table2'
 import * as rb from 'react-bootstrap'
 import ProfileModal from '../ProfileModal'
+import Footer from './Footers/Footer'
 
 // reactstrap components
 import {
@@ -34,10 +35,6 @@ import {
 
 // core components
 import DemoNavbar from "./Navbars/DemoNavbar.js";
-import CardsFooter from "./Footers/CardsFooter.js";
-
-// index page sections
-import Download from "./IndexSections/Download";
 
 
 let testing
@@ -73,6 +70,7 @@ class MainPage extends React.Component {
 			tabs: 1,
 		}
 	}
+
 	componentDidMount() {
 		document.documentElement.scrollTop = 0;
 		document.scrollingElement.scrollTop = 0;
@@ -109,12 +107,6 @@ class MainPage extends React.Component {
 					// Use reader.result
 					const lols = Papa.parse(reader.result, { header: true, skipEmptyLines: true })
 
-					// console.log(lols.data)
-
-					// Posting csv data into db
-					// this.postData('"' + JSON.stringify(lols.data) + '"')
-					// this.postSuspects(JSON.stringify(lols.data))
-
 					// Adds names into dropdown
 					this.setState({ dataList: ["All Suspected Cases", ...lols.data.map(names => names.firstName + " " + names.lastName)] })
 
@@ -122,6 +114,7 @@ class MainPage extends React.Component {
 					this.setState({ suspectCases: data })
 				}
 				reader.readAsText(file)
+				this.setState({ error: false })
 			}
 			else {
 				this.setState({ error: true, errorMsg: "You have uploaded invalid files! Please rename the file to <filename>_suspected (For suspected cases)" })
@@ -153,9 +146,10 @@ class MainPage extends React.Component {
 					this.setState({ movements: data })
 				}
 				reader.readAsText(file)
+				this.setState({ error: false })
 			}
 			else {
-				this.setState({ error: true, errorMsg: "You have uploaded invalid files! Please rename the file to <filename>_movement (For suspected case movement)" })
+				this.setState({ error: true, errorMsg: "You have uploaded invalid files! Please rename the file to <filename>_movements (For suspected case movement)" })
 				return
 			}
 		}
@@ -188,11 +182,10 @@ class MainPage extends React.Component {
 	populateGraph1() {
 		let series2 = []
 
-		var string = this.state.mapData;
-		var numbers = string.match(/\d+/g).map(Number);
-		// console.log(numbers)
+		var strings = this.state.mapData;
 
-		// console.log(this.state.suspectCases)
+		var numbers = strings.match(/\d+/g).map(Number);
+
 		numbers.forEach(x => {
 			let data = []
 
@@ -273,7 +266,7 @@ class MainPage extends React.Component {
 				for (var data of this.state.CCID) {
 
 					// console.log(data)
-					if (x.peopleProfileId == data) {
+					if (x.peopleProfileId === data) {
 						IDs.push(x.peopleProfileId)
 					}
 				}
@@ -337,26 +330,33 @@ class MainPage extends React.Component {
 
 	render() {
 
-		let displaySetting, displaySetting2, seriesdata
+		// position:"absolute", top:-10000
 
-		if (this.state.suspectCases.length > 0 && this.state.movements.length > 0) {
-			// displaySetting = "none"
-			displaySetting2 = "block"
+		let displayWarning, displaySetting2, ds1, ds3, placename, maindp1, maindp2, ds11, ds12, ds31, ds32
 
-		}
-		else {
-			// displaySetting = "block"
-			displaySetting2 = "none"
-		}
+		displaySetting2 = this.state.suspectCases.length > 0 && this.state.movements.length > 0 ? "visible" : "hidden"
+		maindp1 = this.state.suspectCases.length > 0 && this.state.movements.length > 0 ? "relative" : "absolute"
+		maindp2 = this.state.suspectCases.length > 0 && this.state.movements.length > 0 ? 0 : -10000
 
-		let graph1, graph11
+		ds1 = this.state.mapData.length > 0 ? "visible" : "hidden"
+		ds11 = this.state.mapData.length > 0 ? "relative" : "absolute"
+		ds12 = this.state.mapData.length > 0 ? 0 : -10000
+
+		ds3 = this.state.datas.length > 0 ? "visible" : "hidden"
+		ds31 = this.state.datas.length > 0 ? "relative" : "absolute"
+		ds32 = this.state.datas.length > 0 ? 0 : -10000
+
+		displayWarning = this.state.error ? "block" : "none"
+
+		let graph1
 
 		const that = this;
-
-		let placename;
+		
+		console.log("yayyy")
+		console.log(this.state.mapData)
 
 		//// ### UNCOMMENT FOR GANTT CHART ###
-		if (this.state.mapData != "") {
+		if (this.state.mapData.length !== 0) {
 			testing = this.populateGraph1()
 		}
 
@@ -384,7 +384,6 @@ class MainPage extends React.Component {
 				fetch("http://localhost:8080/getMovementForDate?placeName=" + testing[config.seriesIndex].data[config.dataPointIndex].x + "&dates=" + testing[config.seriesIndex].data[config.dataPointIndex].y + "&personName=" + testing[config.seriesIndex].name)
 					.then(response => response.json()).then(data => that.setState({ datas: data })).catch(err => { console.log(err); });
 			}
-
 
 			options = {
 				options: {
@@ -421,8 +420,10 @@ class MainPage extends React.Component {
 			graph1 = <Graph display={displaySetting2} options={options.options} series={testing} tool />
 		}
 
+		console.log(this.state.datas)
+
 		// Creating the COnfirmed Cases
-		let mappingsCC = this.state.datas.filter(data => data.caseNumber != null).map(data => {
+		let mappingsCC = this.state.datas.filter(data => data.caseNumber !== null).map(data => {
 			return ({
 				caseNumber: data.caseNumber,
 				UID: data.peopleProfileId,
@@ -485,7 +486,7 @@ class MainPage extends React.Component {
 		//Mapping the Contacts
 		let newlist2 = []
 
-		this.state.datas.filter(data => data.caseNumber == null).map(data => {
+		this.state.datas.filter(data => data.caseNumber === null).map(data => {
 
 			if (this.state.CloseContacts[data.locationShortaddress] != undefined) {
 				if (this.state.CloseContacts[data.locationShortaddress].includes(data.peopleProfileId)) {
@@ -571,6 +572,7 @@ class MainPage extends React.Component {
 						{/* 1st Hero Variation */}
 					</div>
 
+					{/* IMPORT SECTION */}
 					<section className="section section-lg pt-lg-0 mt--200">
 						<Container>
 							<Row className="justify-content-center">
@@ -580,10 +582,10 @@ class MainPage extends React.Component {
 											<Card className="card-lift--hover shadow border-0">
 												<CardBody className="py-5">
 													<div className="icon icon-shape icon-shape-primary rounded-circle mb-4">
-														<i className="ni ni-check-bold" />
+														<i className="ni ni-single-02" />
 													</div>
 													<h6 className="text-primary text-uppercase">
-														Import Suspected Profiles
+														Suspected Profiles
 													</h6>
 													<p className="description mt-3">
 														{"Please format you file to <filename>_suspected"}.
@@ -599,10 +601,10 @@ class MainPage extends React.Component {
 											<Card className="card-lift--hover shadow border-0">
 												<CardBody className="py-5">
 													<div className="icon icon-shape icon-shape-success rounded-circle mb-4">
-														<i className="ni ni-istanbul" />
+														<i className="ni ni-map-big" />
 													</div>
 													<h6 className="text-success text-uppercase">
-														Import Suspected Movements
+														Suspected Movements
 													</h6>
 													<p className="description mt-3">
 														{"Please format you file to <filename>_movement"}.
@@ -622,11 +624,18 @@ class MainPage extends React.Component {
 									</Row>
 								</Col>
 							</Row>
+							<div style={{display:displayWarning}}>
+								<br/>
+								<div class="alert alert-warning" role="alert">
+									{this.state.errorMsg}
+								</div>
+							</div>
+							
 						</Container>
 					</section>
 
 					{/* <div style={{display:displaySetting2}}> */}
-					<div>
+					<div style={{visibility:displaySetting2, position: maindp1, top: maindp2}}>
 
 						{/* MAP SECTION */}
 						<section className="section section-lg">
@@ -647,349 +656,221 @@ class MainPage extends React.Component {
 							</Container>
 						</section>
 
-						{/* GANTT CHART SECTION */}
-						<section className="section bg-secondary">
-							<Container>
-								<Row className="row-grid align-items-center">
-									<Row className="justify-content-center text-center mb-lg">
-										<Col lg="8">
-											<h2 className="display-3">Gantt Chart</h2>
-											<p className="lead text-muted">
-												================================================
-												<br />CLICK ON THE GANTT CHART AND SCROLL TO TABLE
+						<div style={{visibility:ds1, position: ds11, top: ds12}}>
+							{/* GANTT CHART SECTION */}
+							<section className="section bg-secondary">
+								<Container>
+									<Row className="row-grid align-items-center">
+										<Row className="justify-content-center text-center mb-lg">
+											<Col lg="8">
+												<h2 className="display-3">Gantt Chart</h2>
+												<p className="lead text-muted">
+													================================================
+													<br />CLICK ON THE GANTT CHART AND SCROLL TO TABLE
 													================================================
 												</p>
-										</Col>
+											</Col>
+										</Row>
+										{graph1}
 									</Row>
-									{graph1}
-								</Row>
-							</Container>
-						</section>
+								</Container>
+							</section>
 
-						{/* TABLE SECTION */}
-						<section className="section pb-0 bg-gradient-warning">
-							<Container>
-								<h4 className="display-3 text-white"><center>Table Checker</center></h4>
-								<div className="nav-wrapper">
-									<Nav
-										className="nav-fill flex-column flex-md-row"
-										id="tabs-icons-text"
-										pills
-										role="tablist"
-									>
-										<NavItem>
-											<NavLink
-												aria-selected={this.state.tabs === 1}
-												className={classnames("mb-sm-3 mb-md-0", {
-													active: this.state.tabs === 1
-												})}
-												onClick={e => this.toggleNavs(e, "tabs", 1)}
-												href="#pablo"
-												role="tab"
+							<div style={{visibility:ds3, position: ds31, top: ds32}}>
+								{/* TABLE SECTION */}
+								<section className="section pb-0 bg-gradient-warning">
+									<Container>
+										<h4 className="display-3 text-white"><center>Table Checker</center></h4>
+										<div className="nav-wrapper">
+											<Nav
+												className="nav-fill flex-column flex-md-row"
+												id="tabs-icons-text"
+												pills
+												role="tablist"
 											>
-												<i className="ni ni-cloud-upload-96 mr-2" />
-												Confirmed Cases
-											</NavLink>
-										</NavItem>
-										<NavItem>
-											<NavLink
-												aria-selected={this.state.tabs === 2}
-												className={classnames("mb-sm-3 mb-md-0", {
-													active: this.state.tabs === 2
-												})}
-												onClick={e => this.toggleNavs(e, "tabs", 2)}
-												href="#pablo"
-												role="tab"
-											>
-												<i className="ni ni-bell-55 mr-2" />
-												Close Contacts
-											</NavLink>
-										</NavItem>
-										<NavItem>
-											<NavLink
-												aria-selected={this.state.tabs === 3}
-												className={classnames("mb-sm-3 mb-md-0", {
-													active: this.state.tabs === 3
-												})}
-												onClick={e => this.toggleNavs(e, "tabs", 3)}
-												href="#pablo"
-												role="tab"
-											>
-												<i className="ni ni-calendar-grid-58 mr-2" />
-												Public At The Place
-											</NavLink>
-										</NavItem>
-									</Nav>
+												<NavItem>
+													<NavLink
+														aria-selected={this.state.tabs === 1}
+														className={classnames("mb-sm-3 mb-md-0", {
+															active: this.state.tabs === 1
+														})}
+														onClick={e => this.toggleNavs(e, "tabs", 1)}
+														href="#pablo"
+														role="tab"
+													>
+														<i className="ni ni-cloud-upload-96 mr-2" />
+														Confirmed Cases
+													</NavLink>
+												</NavItem>
+												<NavItem>
+													<NavLink
+														aria-selected={this.state.tabs === 2}
+														className={classnames("mb-sm-3 mb-md-0", {
+															active: this.state.tabs === 2
+														})}
+														onClick={e => this.toggleNavs(e, "tabs", 2)}
+														href="#pablo"
+														role="tab"
+													>
+														<i className="ni ni-bell-55 mr-2" />
+														Close Contacts
+													</NavLink>
+												</NavItem>
+												<NavItem>
+													<NavLink
+														aria-selected={this.state.tabs === 3}
+														className={classnames("mb-sm-3 mb-md-0", {
+															active: this.state.tabs === 3
+														})}
+														onClick={e => this.toggleNavs(e, "tabs", 3)}
+														href="#pablo"
+														role="tab"
+													>
+														<i className="ni ni-calendar-grid-58 mr-2" />
+														Public At The Place
+													</NavLink>
+												</NavItem>
+											</Nav>
+										</div>
+										<Card className="shadow">
+											<CardBody>
+												<TabContent activeTab={"tabs" + this.state.tabs}>
+													<TabPane tabId="tabs1">
+														<div style={{ textAlign: "left", height: "100%" }}>
+															<h5>
+																{/* <Chip label="Basic" /> */}
+																{/* PlaceName */}
+																<Badge color="primary">
+																	{this.state.placename}
+																</Badge>
+																{' '}
+																{/* Time Span */}
+																<Badge color="primary">
+																	{this.convertSQLDate(this.state.datetime[0], this.state.datetime[1], "header")}
+																</Badge>
+															</h5>
+															<Table tableprops={mappingsCC} display={displaySetting2} type="CC" databack={this.databackTable} />
+														</div>
+													</TabPane>
+													<TabPane tabId="tabs2">
+														<div style={{ textAlign: "left", height: "100%" }}>
+															<h5>
+																{/* PlaceName */}
+																<Badge color="primary">
+																	{this.state.placename}
+																</Badge>
+																{' '}
+																{/* Time Span */}
+																<Badge color="primary">
+																	{this.convertSQLDate(this.state.datetime[0], this.state.datetime[1], "header")}
+																</Badge>
+															</h5>
+															<Table tableprops={mappingsclose} display={displaySetting2} type="PATP" databack={this.databackTable} />
+															<br/>
+															<Button color="primary" type="button" onClick={() => this.setState({ showSelection: true })}>
+																Manual Import
+															</Button>
+														</div>
+													</TabPane>
+													<TabPane tabId="tabs3">
+														<div style={{ textAlign: "left", height: "100%" }}>
+															<h5>
+																{/* PlaceName */}
+																<Badge color="primary">
+																	{this.state.placename}
+																</Badge>
+																{' '}
+																{/* Time Span */}
+																<Badge color="primary">
+																	{this.convertSQLDate(this.state.datetime[0], this.state.datetime[1], "header")}
+																</Badge>
+															</h5>
+															<Table tableprops={mappingsPATP} display={displaySetting2} type="PATP" databack={this.databackTable} />
+														</div>
+													</TabPane>
+												</TabContent>
+											</CardBody>
+										</Card>
+									</Container>
+									{/* SVG separator */}
+									<div className="separator separator-bottom separator-skew zindex-100">
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											preserveAspectRatio="none"
+											version="1.1"
+											viewBox="0 0 2560 100"
+											x="0"
+											y="0"
+										>
+											<polygon
+												className="fill-white"
+												points="2560 0 2560 100 0 100"
+											/>
+										</svg>
+									</div>
+								</section>
+								
+								{/* TRANSFER SECTION */}
+								<div>
+									<rb.Modal show={this.state.showSelection} onHide={()=>this.setState({showSelection:false})} centered size="xl" scrollable={true}>
+										<rb.Modal.Header closeButton>
+											<rb.Modal.Title>Transfer Users</rb.Modal.Title>
+										</rb.Modal.Header>
+										<rb.Modal.Body>
+											<div style={{float:"left", textAlign:"center", width:"40%"}}>
+												<text fontSize="20px"><b>Close Contact With Public</b></text>
+												<div style={{backgroundColor:"#F9F9F9", }}>
+													<Table2 tableprops={mappingsclose} display={displaySetting2} type="modal-edit" callbackFromParent={this.myCallback2} databack={this.databackTable}/>
+												</div>
+											</div>
+											<div style={{float:"left", textAlign:"center", width:"20%", alignItems:"center", justifyContent:"center"}}>
+												<rb.Button onClick={this.toCCClicked}> &lt; &lt; </rb.Button>
+												<div className="clearfix"></div>
+												<rb.Button onClick={this.fromCCClicked}> &gt; &gt; </rb.Button>
+											</div>
+											<div style={{float:"right", textAlign:"center", width:"40%"}}>
+												<text fontSize="20px"><b>Public At The Place</b></text>
+												<div style={{backgroundColor:"#F9F9F9"}}>
+													<Table tableprops={mappingsPATP} display={displaySetting2} type="modal-edit" callbackFromParent={this.myCallback} databack={this.databackTable}/>
+												</div>
+											</div>
+										</rb.Modal.Body>
+										<rb.Modal.Footer>
+											<rb.Button variant="secondary" onClick={()=>this.setState({showSelection:false})}>
+												Close
+											</rb.Button>
+										</rb.Modal.Footer>
+									</rb.Modal>
 								</div>
-								<Card className="shadow">
-									<CardBody>
-										<TabContent activeTab={"tabs" + this.state.tabs}>
-											<TabPane tabId="tabs1">
-												<div style={{ textAlign: "left", height: "100%" }}>
-													<h5>
-														{/* <Chip label="Basic" /> */}
-														{/* PlaceName */}
-														<Badge color="primary">
-															{this.state.placename}
-														</Badge>
-														{' '}
-														{/* Time Span */}
-														<Badge color="primary">
-															{this.convertSQLDate(this.state.datetime[0], this.state.datetime[1], "header")}
-														</Badge>
-													</h5>
-													<Table tableprops={mappingsCC} display={displaySetting2} type="CC" databack={this.databackTable} />
-												</div>
-											</TabPane>
-											<TabPane tabId="tabs2">
-												<div style={{ textAlign: "left", height: "100%" }}>
-													<h5>
-														{/* PlaceName */}
-														<Badge color="primary">
-															{this.state.placename}
-														</Badge>
-														{' '}
-														{/* Time Span */}
-														<Badge color="primary">
-															{this.convertSQLDate(this.state.datetime[0], this.state.datetime[1], "header")}
-														</Badge>
-													</h5>
-													<Table tableprops={mappingsclose} display={displaySetting2} type="PATP" databack={this.databackTable} />
-													<Button color="primary" type="button" onClick={() => this.setState({ showSelection: true })}>
-														Manual Import
-														</Button>
-												</div>
-											</TabPane>
-											<TabPane tabId="tabs3">
-												<div style={{ textAlign: "left", height: "100%" }}>
-													<h5>
-														{/* PlaceName */}
-														<Badge color="primary">
-															{this.state.placename}
-														</Badge>
-														{' '}
-														{/* Time Span */}
-														<Badge color="primary">
-															{this.convertSQLDate(this.state.datetime[0], this.state.datetime[1], "header")}
-														</Badge>
-													</h5>
-													<Table tableprops={mappingsPATP} display={displaySetting2} type="PATP" databack={this.databackTable} />
-												</div>
-											</TabPane>
-										</TabContent>
-									</CardBody>
-								</Card>
-							</Container>
-							{/* SVG separator */}
-							<div className="separator separator-bottom separator-skew zindex-100">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									preserveAspectRatio="none"
-									version="1.1"
-									viewBox="0 0 2560 100"
-									x="0"
-									y="0"
-								>
-									<polygon
-										className="fill-white"
-										points="2560 0 2560 100 0 100"
-									/>
-								</svg>
+
+								{/* Profile Page */}
+								<div>
+									<rb.Modal show={this.state.showSelection2} onHide={()=>this.setState({showSelection2:false})} size="xl" centered scrollable={true}>
+										<rb.Modal.Header closeButton>
+											<rb.Modal.Title>Person Profile</rb.Modal.Title>
+										</rb.Modal.Header>
+										<rb.Modal.Body>
+											<ProfileModal profile={this.state.profileModal}/>
+										</rb.Modal.Body>
+										<rb.Modal.Footer>
+											<rb.Button variant="secondary" onClick={()=>this.setState({showSelection2:false})}>
+												Close
+											</rb.Button>
+										</rb.Modal.Footer>
+									</rb.Modal>
+								</div>
 							</div>
-						</section>
-
-						<section className="section section-lg">
-							<Container>
-								<Row className="row-grid justify-content-center">
-								<Col className="text-center" lg="8">
-									<h2 className="display-3">
-									Thank You For Using This Simple Tool{" "}
-									<span className="text-success">
-										Designed for Viewing Covid-19 Suspects
-									</span>
-									</h2>
-									<p className="lead">
-									This project was done as part of my internship with CSIT
-									that started on 6 July and ended on 20 November
-									</p>
-
-									{/* <a>
-										<img />
-									</a> */}
-
-									<div className="btn-wrapper">
-									{/* <Button
-										className="mb-3 mb-sm-0"
-										color="primary"
-										href="https://www.creative-tim.com/product/argon-design-system-react?ref=adsr-landing-page"
-									>
-										Download React
-									</Button> */}
-									</div>
-									<div className="text-center">
-									<h4 className="display-4 mb-5 mt-5">
-										Here are some links to contact me
-									</h4>
-									<Row className="justify-content-center">
-										<Col lg="2" xs="4">
-										<a
-											href="https://github.com/aquaimpact"
-											id="tooltip255035741"
-											target="_blank"
-										>
-											<img
-											alt="..."
-											className="img-fluid"
-											src="https://github.githubassets.com/images/modules/logos_page/Octocat.png"
-											/>
-										</a>
-										<UncontrolledTooltip delay={0} target="tooltip255035741">
-											Github
-										</UncontrolledTooltip>
-										</Col>
-										<Col lg="2" xs="4">
-										<a
-											href="https://www.creative-tim.com/product/vue-argon-design-system?ref=adsr-landing-page"
-											id="tooltip265846671"
-											target="_blank"
-										>
-											<img
-											alt="..."
-											className="img-fluid"
-											src="https://s3.amazonaws.com/creativetim_bucket/tim_static_images/presentation-page/vue.jpg"
-											/>
-										</a>
-										<UncontrolledTooltip delay={0} target="tooltip265846671">
-											Vue.js - The progressive javascript framework
-										</UncontrolledTooltip>
-										</Col>
-										<Col lg="2" xs="4">
-										<a
-											href="https://www.creative-tim.com/product/argon-design-system-angular?ref=adsr-landing-page"
-											id="tooltip233150499"
-											target="_blank"
-										>
-											<img
-											alt="..."
-											className="img-fluid"
-											src="https://s3.amazonaws.com/creativetim_bucket/tim_static_images/presentation-page/angular.jpg"
-											/>
-										</a>
-										<UncontrolledTooltip delay={0} target="tooltip233150499">
-											Angular - One framework. Mobile & Desktop
-										</UncontrolledTooltip>
-										</Col>
-										<Col lg="2" xs="4">
-										<a
-											href="https://www.creative-tim.com/product/argon-design-system-react?ref=adsr-landing-page"
-											id="tooltip308866163"
-											target="_blank"
-										>
-											<img
-											alt="..."
-											className="img-fluid"
-											src="https://s3.amazonaws.com/creativetim_bucket/tim_static_images/presentation-page/react.jpg"
-											/>
-										</a>
-										<UncontrolledTooltip delay={0} target="tooltip308866163">
-											React - A JavaScript library for building user
-											interfaces
-										</UncontrolledTooltip>
-										</Col>
-										<Col lg="2" xs="4">
-										<a
-											href="https://www.creative-tim.com/product/argon-design-system-react?ref=adsr-landing-page"
-											id="tooltip76119384"
-											target="_blank"
-										>
-											<img
-											alt="..."
-											className="img-fluid"
-											src="https://s3.amazonaws.com/creativetim_bucket/tim_static_images/presentation-page/sketch.jpg"
-											/>
-										</a>
-										<UncontrolledTooltip delay={0} target="tooltip76119384">
-											Sketch - Digital design toolkit
-										</UncontrolledTooltip>
-										</Col>
-										<Col lg="2" xs="4">
-										<a
-											href="https://www.creative-tim.com/product/argon-design-system-react?ref=adsr-landing-page"
-											id="tooltip646643508"
-											target="_blank"
-										>
-											<img
-											alt="..."
-											className="img-fluid"
-											src="https://s3.amazonaws.com/creativetim_bucket/tim_static_images/presentation-page/ps.jpg"
-											/>
-										</a>
-										<UncontrolledTooltip delay={0} target="tooltip646643508">
-											Adobe Photoshop - Software for digital images
-											manipulation
-										</UncontrolledTooltip>
-										</Col>
-									</Row>
-									</div>
-								</Col>
-								</Row>
-							</Container>
-						</section>
-
-						<div>
-							<rb.Modal show={this.state.showSelection} onHide={()=>this.setState({showSelection:false})} centered size="xl" scrollable={true}>
-								<rb.Modal.Header closeButton>
-									<rb.Modal.Title>Transfer Users</rb.Modal.Title>
-								</rb.Modal.Header>
-								<rb.Modal.Body>
-									<div style={{float:"left", textAlign:"center", width:"40%"}}>
-										<text fontSize="20px"><b>Close Contact With Public</b></text>
-										<div style={{backgroundColor:"#F9F9F9", }}>
-											<Table2 tableprops={mappingsclose} display={displaySetting2} type="modal-edit" callbackFromParent={this.myCallback2} databack={this.databackTable}/>
-										</div>
-									</div>
-									<div style={{float:"left", textAlign:"center", width:"20%", alignItems:"center", justifyContent:"center"}}>
-										<rb.Button onClick={this.toCCClicked}> &lt; &lt; </rb.Button>
-										<div className="clearfix"></div>
-										<rb.Button onClick={this.fromCCClicked}> &gt; &gt; </rb.Button>
-									</div>
-									<div style={{float:"right", textAlign:"center", width:"40%"}}>
-										<text fontSize="20px"><b>Public At The Place</b></text>
-										<div style={{backgroundColor:"#F9F9F9"}}>
-											<Table tableprops={mappingsPATP} display={displaySetting2} type="modal-edit" callbackFromParent={this.myCallback} databack={this.databackTable}/>
-										</div>
-									</div>
-								</rb.Modal.Body>
-								<rb.Modal.Footer>
-									<rb.Button variant="secondary" onClick={()=>this.setState({showSelection:false})}>
-										Close
-									</rb.Button>
-								</rb.Modal.Footer>
-							</rb.Modal>
+						
 						</div>
-
-						{/* Profile Page */}
-						<div>
-							<rb.Modal show={this.state.showSelection2} onHide={()=>this.setState({showSelection2:false})} size="xl" centered scrollable={true}>
-								<rb.Modal.Header closeButton>
-									<rb.Modal.Title>Person Profile</rb.Modal.Title>
-								</rb.Modal.Header>
-								<rb.Modal.Body>
-									<ProfileModal profile={this.state.profileModal}/>
-								</rb.Modal.Body>
-								<rb.Modal.Footer>
-									<rb.Button variant="secondary" onClick={()=>this.setState({showSelection2:false})}>
-										Close
-									</rb.Button>
-								</rb.Modal.Footer>
-							</rb.Modal>
-						</div>
-
 					</div>
 
-				</main>
+					{/* END SECTION */}
+					<section className="section section-lg">
+						<Footer/>
+					</section>
 
-				{/* <CardsFooter /> */}
+
+				</main>
 			</>
 		);
 	}

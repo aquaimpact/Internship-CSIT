@@ -15,7 +15,7 @@ class Maps extends React.Component{
         this.state = {
             lng: 103.851959,
             lat: 1.290270,
-            zoom: 9.5,
+            zoom: 10.5,
             movements:[],
         };
 
@@ -50,12 +50,12 @@ class Maps extends React.Component{
         // const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
         let finalDatetime
-        if(selection == "d"){
+        if(selection === "d"){
             finalDatetime = day + " " + mon + " " + year
         }
-        else if(selection == "t"){
+        else if(selection === "t"){
             let timing = "AM"
-            if(parseInt(hh) == 12){
+            if(parseInt(hh) === 12){
                 timing = "PM"
             }
             if(parseInt(hh) > 12){
@@ -64,7 +64,7 @@ class Maps extends React.Component{
             }
             finalDatetime = hh + ":" + min + " " + timing
         }
-        else if(selection == "dt"){
+        else if(selection === "dt"){
             finalDatetime = new Date(datetime)
         }
         return finalDatetime
@@ -153,7 +153,7 @@ class Maps extends React.Component{
                     },
                     'paint': {
                         'line-color': '#888',
-                        'line-width': 8
+                        'line-width': 5
                     }
                 });
 

@@ -115,7 +115,7 @@ class DemoNavbar extends React.Component {
               <a>
                 <img style={{height:"30px"}}
                     alt="..."
-                    src={require("G:/INTERNSHIPFILES/CodingFolder/csit-website/src/assets/img/brand/argon-react-white.png")}
+                    src={require("../../../assets/img/brand/argon-react-white.png")}
                   />
               </a>
 

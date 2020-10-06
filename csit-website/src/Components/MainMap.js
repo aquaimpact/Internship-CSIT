@@ -4,9 +4,6 @@ import mapboxgl from 'mapbox-gl';
 mapboxgl.accessToken = 'pk.eyJ1IjoiYXF1YWltcGFjdCIsImEiOiJja2R0d2N3emswdzlwMnptcGliNTk4ZHNkIn0.jPYEzZD-aErgL25Zx9N_Kg';
 
 let map
-let loaded = false
-let IDs = []
-let countMoves = 0
 let counter = 0
 // let colorIDs = []
 
@@ -18,7 +15,7 @@ class MainMap extends React.Component{
         this.state = {
             lng: 103.851959,
             lat: 1.290270,
-            zoom: 9.5,
+            zoom: 10.5,
 
         };
 
@@ -26,12 +23,14 @@ class MainMap extends React.Component{
     }
 
     componentDidMount() {
+
         map = new mapboxgl.Map({
             container: this.mapContainer,
             style: 'mapbox://styles/mapbox/streets-v11',
             center: [this.state.lng, this.state.lat],
             zoom: this.state.zoom
         });
+        
 
         // if(this.props.profile.length > 0 && this.props.movement.length > 0){
 
@@ -71,12 +70,12 @@ class MainMap extends React.Component{
         const shortmonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
 
         let finalDatetime
-        if(selection == "d"){
+        if(selection === "d"){
             finalDatetime = day + " " + shortmonthNames[parseInt(mon)-1] + " " + year
         }
-        else if(selection == "t"){
+        else if(selection === "t"){
             let timing = "AM"
-            if(parseInt(hh) == 12){
+            if(parseInt(hh) === 12){
                 timing = "PM"
             }
             if(parseInt(hh) > 12){
@@ -94,7 +93,7 @@ class MainMap extends React.Component{
     componentDidUpdate(){
 
         let that = this
-        if(this.props.profile.length > 0 && this.props.movement.length > 0 && counter != 1){
+        if(this.props.profile.length > 0 && this.props.movement.length > 0 && counter !== 1){
             // if(IDs.length != 0){
             //     IDs = []
             // }
@@ -105,7 +104,7 @@ class MainMap extends React.Component{
             let mappedResults = this.props.profile.map(x => {
                 return({
                     profile: x,
-                    movements: this.props.movement.filter(xx => xx.suspectId == x.id)
+                    movements: this.props.movement.filter(xx => xx.suspectId === x.id)
                 })
             })
 
@@ -128,7 +127,7 @@ class MainMap extends React.Component{
             console.log(personGroupedByColor)
 
             var UPoints = Object.keys(personGroupedByColor).map(function(key) {
-                if(personGroupedByColor[key].length == 1){
+                if(personGroupedByColor[key].length === 1){
                     let item = personGroupedByColor[key][0]
                     return({
                         'type': 'Feature',
@@ -137,13 +136,16 @@ class MainMap extends React.Component{
                             'enter': item.datetimeEntered,
                             'leave': item.datetimeLeft,
                             'placeID': item.locationShortaddress,
+                            'marker-symbol': '1',
+                            'marker-color': '#3bb2d0',
+                            'marker-size': 'large',
                             'description':
                                 `<strong>${item.locationShortaddress}</strong><p>Time Entered: ${that.getDatetime(item.datetimeEntered, 't')}</p><p>Time Left: ${that.getDatetime(item.datetimeLeft, 't')}</p><p>Date: ${that.getDatetime(item.datetimeLeft, 'd')}</p>`
                             },
                         'geometry': {
                             'type': 'Point',
-                            'coordinates': [item.locationLong, item.locationLat]
-                        }
+                            'coordinates': [item.locationLong, item.locationLat],
+                        },
                     })
                 }
                 else{
@@ -226,7 +228,7 @@ class MainMap extends React.Component{
                             },
                             'paint': {
                                 'line-color': color,
-                                'line-width': 8
+                                'line-width': 5
                             }
                         });
                     })
@@ -315,7 +317,6 @@ class MainMap extends React.Component{
             <div style={{position:"relative",height:"700px", width:"100%"}}>
                 <div ref={el => this.mapContainer = el} style={{position:"reletive", width:"inherit", height:"inherit"}}/>
             </div>
-            
         )
     }
 
